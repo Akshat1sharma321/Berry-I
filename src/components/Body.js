@@ -1,4 +1,4 @@
-import Rescard ,{withopen} from "./Rescard";
+import Rescard, { withopen } from "./Rescard";
 
 import { SEARCH_CDN } from "../utils/constant";
 import { useContext, useState } from "react";
@@ -10,10 +10,10 @@ import UserContext from "./UserContext";
 
 const Body = () => {
   const status = useOnlineStatus();
-  if(status === false){
-    return <h1>You are offline. Please check your internet connection.</h1>   
+  if (status === false) {
+    return <h1>You are offline. Please check your internet connection.</h1>;
   }
-const {loggedInUser,setuserInfo} = useContext(UserContext)
+  const { loggedInUser, setuserInfo } = useContext(UserContext);
   // const arr = useState(resobj);
   const arr = useState([]);
   const [listOfRestaurants, setlistOfRestaurants] = arr;
@@ -23,25 +23,49 @@ const {loggedInUser,setuserInfo} = useContext(UserContext)
   useEffect(() => {
     fetchData();
   }, []);
+  // const fetchData = async () => {
+  //   const data = await fetch(
+  //     "https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9715987&lng=77.5945627&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
+  //   );
+  //   const json = await data.json();
+  //   // console.log(json);
+
+  //   setlistOfRestaurants(
+  //     json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+  //   );
+  //   setFilteredData(
+  //     json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+  //   );
+  // };
+  //   {console.log("Body Rendered",listOfRestaurants)};
+
+  // if (listOfRestaurants.length === 0) {
+  //   return <ShimmerUi />;
+  // }
+
   const fetchData = async () => {
-    const data = await fetch(
-      "https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9715987&lng=77.5945627&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
-    );
-    const json = await data.json();
-    // console.log(json);
+    try {
+      // Use an environment variable or detect the environment
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "/api/restaurants"
+          : "http://localhost:3001/api/restaurants";
 
-    setlistOfRestaurants(
-      json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
-    );
-    setFilteredData(
-      json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
-    );
+      const data = await fetch(API_URL);
+      const json = await data.json();
+
+      setlistOfRestaurants(
+        json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
+          ?.restaurants
+      );
+      setFilteredData(
+        json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
+          ?.restaurants
+      );
+    } catch (error) {
+      console.error("Error fetching restaurant data:", error);
+    }
   };
-    {console.log("Body Rendered",listOfRestaurants)};
-
-  if (listOfRestaurants.length === 0) {
-    return <ShimmerUi />;
-  }
 
   return (
     <div className="body">
@@ -70,11 +94,12 @@ const {loggedInUser,setuserInfo} = useContext(UserContext)
         </button>
       </div>
       <div className="filter flex justify-between ">
-        
-        <input className="filter-btn p-2 border-2 border-black rounded-full  mx-8  h-12 m-2 bg-pink-100 font-gilroyLight" placeholder="   User Name"
-        value={loggedInUser}
-        onChange={(e)=>setuserInfo(e.target.value)}/>
-
+        <input
+          className="filter-btn p-2 border-2 border-black rounded-full  mx-8  h-12 m-2 bg-pink-100 font-gilroyLight"
+          placeholder="   User Name"
+          value={loggedInUser}
+          onChange={(e) => setuserInfo(e.target.value)}
+        />
 
         <button
           className="filter-btn p-2 border-2 border-black rounded-full bg-pink-100 font-gilroyLight m-2 mx-9"
