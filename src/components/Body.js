@@ -23,49 +23,49 @@ const Body = () => {
   useEffect(() => {
     fetchData();
   }, []);
-  // const fetchData = async () => {
-  //   const data = await fetch(
-  //     "https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9715987&lng=77.5945627&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
-  //   );
-  //   const json = await data.json();
-  //   // console.log(json);
-
-  //   setlistOfRestaurants(
-  //     json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
-  //   );
-  //   setFilteredData(
-  //     json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
-  //   );
-  // };
-  //   {console.log("Body Rendered",listOfRestaurants)};
-
-  // if (listOfRestaurants.length === 0) {
-  //   return <ShimmerUi />;
-  // }
-
   const fetchData = async () => {
-    try {
-      // Use an environment variable or detect the environment
-      const API_URL =
-        process.env.NODE_ENV === "production"
-          ? "/api/restaurants"
-          : "http://localhost:3001/api/restaurants";
+    const data = await fetch(
+      "https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9715987&lng=77.5945627&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
+    );
+    const json = await data.json();
+    // console.log(json);
 
-      const data = await fetch(API_URL);
-      const json = await data.json();
-
-      setlistOfRestaurants(
-        json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
-          ?.restaurants
-      );
-      setFilteredData(
-        json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
-          ?.restaurants
-      );
-    } catch (error) {
-      console.error("Error fetching restaurant data:", error);
-    }
+    setlistOfRestaurants(
+      json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+    );
+    setFilteredData(
+      json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+    );
   };
+    {console.log("Body Rendered",listOfRestaurants)};
+
+  if (listOfRestaurants.length === 0) {
+    return <ShimmerUi />;
+  }
+
+  // const fetchData = async () => {
+  //   try {
+  //     // Use an environment variable or detect the environment
+  //     const API_URL =
+  //       process.env.NODE_ENV === "production"
+  //         ? "/api/restaurants"
+  //         : "http://localhost:3001/api/restaurants";
+
+  //     const data = await fetch(API_URL);
+  //     const json = await data.json();
+
+  //     setlistOfRestaurants(
+  //       json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
+  //         ?.restaurants
+  //     );
+  //     setFilteredData(
+  //       json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
+  //         ?.restaurants
+  //     );
+  //   } catch (error) {
+  //     console.error("Error fetching restaurant data:", error);
+  //   }
+  // };
 
   return (
     <div className="body">
