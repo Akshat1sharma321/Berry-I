@@ -6,7 +6,13 @@ export const IMG_CDN =
 export const SEARCH_CDN =
   "https://cdn-icons-png.flaticon.com/512/17280/17280511.png";
 
-export const RES_MENU =
-  "https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=12.9715987&lng=77.5945627&restaurantId=";
+// Use environment detection for API endpoints
+export const API_BASE_URL =
+  process.env.NODE_ENV === "production" ? "" : "http://localhost:3001";
+
+export const RESTAURANTS_API = `${API_BASE_URL}/api/restaurants`;
+
+export const RES_MENU = `${API_BASE_URL}/api/menu/`;
+
 export const FOOD_IMG =
   "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_300,h_300,c_fit/";

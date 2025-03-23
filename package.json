@@ -8,6 +8,7 @@
     "start:server": "node server.js",
     "dev": "concurrently \"npm run start\" \"npm run start:server\"",
     "build": "parcel build index.html",
+    "vercel-build": "npm run build",
     "prod": "NODE_ENV=production node server.js"
   },
   "keywords": [
@@ -39,6 +40,6 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-redux": "^9.2.0",
-    "react-router-dom": "^7.1.1"
+    "react-router-dom": "^6.3.0"
   }
 }

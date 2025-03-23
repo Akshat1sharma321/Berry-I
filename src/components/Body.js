@@ -1,10 +1,10 @@
 import Rescard, { withopen } from "./Rescard";
 
-import { SEARCH_CDN } from "../utils/constant";
+import { SEARCH_CDN, RESTAURANTS_API } from "../utils/constant";
 import { useContext, useState } from "react";
 import { useEffect } from "react";
 import ShimmerUi from "./ShimmerUi";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import useOnlineStatus from "../utils/useOnlineStatus";
 import UserContext from "./UserContext";
 
@@ -23,49 +23,87 @@ const Body = () => {
   useEffect(() => {
     fetchData();
   }, []);
-  const fetchData = async () => {
-    const data = await fetch(
-      "https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9715987&lng=77.5945627&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
-    );
-    const json = await data.json();
-    // console.log(json);
+  // const fetchData = async () => {
+  //   const data = await fetch(
+  //     "https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9715987&lng=77.5945627&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
+  //   );
+  //   const json = await data.json();
+  //   // console.log(json);
 
-    setlistOfRestaurants(
-      json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
-    );
-    setFilteredData(
-      json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
-    );
+  //   setlistOfRestaurants(
+  //     json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+  //   );
+  //   setFilteredData(
+  //     json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+  //   );
+  // };
+  //   {console.log("Body Rendered",listOfRestaurants)};
+
+  // if (listOfRestaurants.length === 0) {
+  //   return <ShimmerUi />;
+  // }
+
+  const fetchData = async () => {
+    try {
+      console.log("Fetching restaurants from:", RESTAURANTS_API);
+      const data = await fetch(RESTAURANTS_API);
+
+      if (!data.ok) {
+        throw new Error(`HTTP error! status: ${data.status}`);
+      }
+
+      const json = await data.json();
+      console.log("API response:", json);
+
+      // Find restaurants in different possible locations in the response
+      let restaurants = null;
+
+      // Try the standard structure
+      restaurants =
+        json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
+          ?.restaurants;
+
+      // If not found, try alternative structures
+      if (!restaurants) {
+        // Loop through all cards to find the restaurants array
+        const cards = json?.data?.cards || [];
+        for (let i = 0; i < cards.length; i++) {
+          const card = cards[i];
+          const possibleRestaurants =
+            card?.card?.card?.gridElements?.infoWithStyle?.restaurants ||
+            card?.data?.data?.cards?.card?.card?.gridElements?.infoWithStyle
+              ?.restaurants ||
+            card?.card?.gridElements?.infoWithStyle?.restaurants;
+
+          if (possibleRestaurants && possibleRestaurants.length > 0) {
+            restaurants = possibleRestaurants;
+            console.log(
+              `Found restaurants in alternative structure at cards[${i}]`
+            );
+            break;
+          }
+        }
+      }
+
+      if (!restaurants || restaurants.length === 0) {
+        console.error(
+          "Expected data structure not found in API response:",
+          json
+        );
+        return;
+      }
+
+      console.log("Restaurants found:", restaurants.length);
+      setlistOfRestaurants(restaurants);
+      setFilteredData(restaurants);
+    } catch (error) {
+      console.error("Error fetching restaurant data:", error);
+    }
   };
-    {console.log("Body Rendered",listOfRestaurants)};
 
   if (listOfRestaurants.length === 0) {
     return <ShimmerUi />;
   }
-
-  // const fetchData = async () => {
-  //   try {
-  //     // Use an environment variable or detect the environment
-  //     const API_URL =
-  //       process.env.NODE_ENV === "production"
-  //         ? "/api/restaurants"
-  //         : "http://localhost:3001/api/restaurants";
-
-  //     const data = await fetch(API_URL);
-  //     const json = await data.json();
-
-  //     setlistOfRestaurants(
-  //       json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
-  //         ?.restaurants
-  //     );
-  //     setFilteredData(
-  //       json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
-  //         ?.restaurants
-  //     );
-  //   } catch (error) {
-  //     console.error("Error fetching restaurant data:", error);
-  //   }
-  // };
 
   return (
     <div className="body">

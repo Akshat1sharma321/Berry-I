@@ -1,19 +1,18 @@
 import { LOGO_CDN } from "../utils/constant";
-import { useState, useEffect,useContext } from "react";
-import { BrowserRouter, Link } from "react-router";
+import { useState, useEffect, useContext } from "react";
+import { Link } from "react-router-dom";
 import useOnlineStatus from "../utils/useOnlineStatus";
 import UserContext from "./UserContext";
 import { useSelector } from "react-redux";
 
 const Header = () => {
   const [logBtn, setlogBtn] = useState("Login");
-  const {loggedInUser} = useContext(UserContext);
+  const { loggedInUser } = useContext(UserContext);
   useEffect(() => {
     console.log("useEffect called");
   }, [logBtn]);
   const status = useOnlineStatus();
-  const cartItems = useSelector((store)=>store.cart.items
-  );
+  const cartItems = useSelector((store) => store.cart.items);
   console.log(cartItems);
   return (
     <div className="header flex justify-between h-20 bg-slate-200 ">
